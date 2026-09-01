@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}SRA{% endblock %}{% block content %}
+<div class="page-head">
+  <div><p class="eyebrow">INTELLIGENT MATCHING</p><h1>Find the Best Employee</h1><p class="muted">Choose a project and rank employees using the same SRA matching logic used by the original CLI.</p></div>
+</div>
+<div class="panel selector-panel">
+  <form method="get" action="{{ url_for('recommendations') }}" class="selector-form">
+    <label for="project_id">Project</label>
+    <select id="project_id" name="project_id" required>
+      <option value="">Select a project...</option>
+      {% for p in projects %}<option value="{{ p[0] }}" {% if selected_project == p[0] %}selected{% endif %}>{{ p[1] }} · {{ p[2] }} priority</option>{% endfor %}
+    </select>
+    <button class="btn primary" type="submit">Find Best Employees</button>
+  </form>
+</div>
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+{% if project %}
+<div class="project-summary">
+  <div><span class="label">Selected Project</span><h2>{{ project[1] }}</h2></div>
+  <div><span class="label">Priority</span><strong>{{ project[2] }}</strong></div>
+  <div><span class="label">Required Allocation</span><strong>{{ '%.2f'|format(project[3]|float) }}%</strong></div>
+  <div><span class="label">Required Skills</span><strong>{{ required_skills|join(', ') if required_skills else 'None' }}</strong></div>
+</div>
+<div class="section-title"><h2>Recommended Resources</h2><span>{{ recommendations|length }} employees ranked</span></div>
+{% if recommendations %}
+  {% for e in recommendations %}
+  <article class="candidate {% if e.rank == 1 %}top-candidate{% endif %}">
+    <div class="rank">#{{ e.rank }}</div>
+    <div class="candidate-main">
+      <div class="candidate-title"><h3>{{ e.name }}</h3><span class="badge">{{ e.recommendation }}</span></div>
+      <div class="score-line"><strong>{{ '%.2f'|format(e.score) }}</strong><span>/ 100 match score</span><div class="scorebar"><i style="width:{{ [e.score,100]|min }}%"></i></div></div>
+      <div class="metrics">
+        <div><span>Skill Match</span><strong>{{ '%.2f'|format(e.skill_match) }}%</strong></div>
+        <div><span>Availability</span><strong>{{ '%.2f'|format(e.availability) }}%</strong></div>
+        <div><span>Current Workload</span><strong>{{ '%.2f'|format(e.workload) }}%</strong></div>
+        <div><span>Experience</span><strong>{{ '%.1f'|format(e.experience) }} yrs</strong></div>
+      </div>
+      <div class="skill-grid">
+        <div><span class="label">Employee Skills</span><p>{% for s in e.skills %}<span class="chip">{{ s }}</span>{% else %}<span class="muted">No skills</span>{% endfor %}</p></div>
+        <div><span class="label">Matched Skills</span><p>{% for s in e.matched_skills %}<span class="chip matched">{{ s }}</span>{% else %}<span class="muted">No required skills matched</span>{% endfor %}</p></div>
+        <div><span class="label">Missing Skills</span><p>{% for s in e.missing_skills %}<span class="chip missing">{{ s }}</span>{% else %}<span class="muted">None</span>{% endfor %}</p></div>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+{% else %}<div class="empty">No employees available for ranking.</div>{% endif %}
+{% endif %}
+{% endblock %}

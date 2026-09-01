@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | SRA{% endblock %}
+{% block heading %}Executive Dashboard{% endblock %}
+{% block content %}
+<div class="hero"><div><div class="hero-kicker">RESOURCE CONTROL CENTER</div><h2>Allocation intelligence at a glance.</h2><p>Monitor staffing, workforce capacity and project pressure from one place.</p></div><a class="btn light" href="/advisor">Open Advisor →</a></div>
+<div class="cards kpi-grid">
+  <div class="card kpi"><div class="kpi-icon">◎</div><small>RESOURCE HEALTH</small><strong>{{'%.0f'|format(health)}}</strong><span class="kpi-caption">out of 100 · {{status|title}}</span></div>
+  <div class="card kpi"><div class="kpi-icon">◉</div><small>EMPLOYEES</small><strong>{{employees}}</strong><span class="kpi-caption">{{underutilized}} underutilized · {{overloaded}} overloaded</span></div>
+  <div class="card kpi"><div class="kpi-icon">▣</div><small>PROJECTS</small><strong>{{projects}}</strong><span class="kpi-caption">{{alerts|length}} requiring attention</span></div>
+  <div class="card kpi"><div class="kpi-icon">↗</div><small>AVG WORKLOAD</small><strong>{{'%.1f'|format(avg_load)}}%</strong><span class="kpi-caption">Peak {{'%.1f'|format(max_load)}}%</span></div>
+</div>
+<div class="dashboard-grid">
+<section class="panel health-panel"><div class="panelhead"><div><span class="section-kicker">SYSTEM HEALTH</span><h2>Resource Health</h2></div><span class="health-badge {{'healthy' if health>=60 else 'attention'}}">{{status}}</span></div>
+<div class="health-score"><div class="health-ring" style="--score:{{health}}"><span>{{'%.0f'|format(health)}}</span></div><div><b>Overall allocation health</b><p class="muted">A combined view of project staffing and workforce balance.</p></div></div>
+{% for n,v in [('Project Staffing',staffing),('Resource Balance',balance)] %}<div class="metric"><span>{{n}}</span><b>{{'%.1f'|format(v)}}%</b></div><div class="bar"><i style="width:{{v}}%"></i></div>{% endfor %}
+</section>
+<section class="panel"><div class="panelhead"><div><span class="section-kicker">ATTENTION REQUIRED</span><h2>Priority Alerts</h2></div><a href="/advisor">Advisor →</a></div>
+{% for a in alerts[:5] %}<div class="alert"><span class="priority {{a.priority|lower}}">{{a.priority|upper}}</span><div class="alert-body"><b>{{a.name}}</b><small>{{'%.1f'|format(a.gap)}}% staffing gap</small></div><a href="/recommendations?project_id={{a.id}}">Find resources →</a></div>{% else %}<div class="empty">No current staffing gaps.</div>{% endfor %}</section>
+</div>
+<section class="panel"><div class="panelhead"><div><span class="section-kicker">PORTFOLIO</span><h2>Project Staffing</h2></div><a href="/projects">Manage projects →</a></div>
+<div class="project-list">{% for p in projects_data %}<div class="project-row"><div class="project-name"><span class="project-dot {{p.priority|lower}}"></span><div><b>{{p.name}}</b><small>{{p.priority}} priority · Required {{'%.1f'|format(p.required)}}%</small></div></div><div class="project-progress"><div class="bar"><i style="width:{{[p.score,100]|min}}%"></i></div><span>{{'%.1f'|format(p.current)}}% / {{'%.1f'|format(p.required)}}%</span></div><span class="status {{'good' if p.gap==0 else 'warn'}}">{{'STAFFED' if p.gap==0 else 'GAP '+('%.1f'|format(p.gap))+'%'}}</span></div>{% endfor %}</div></section>
+<div class="quick-grid"><a href="/recommendations" class="quick-card"><span>★</span><div><b>Find Best Employee</b><small>Rank resources against project needs</small></div>→</a><a href="/team" class="quick-card"><span>♙</span><div><b>Build Smart Team</b><small>Cover required skills with capacity</small></div>→</a><a href="/optimization" class="quick-card"><span>◎</span><div><b>Optimize Allocation</b><small>Generate a capacity-aware plan</small></div>→</a></div>
+{% endblock %}

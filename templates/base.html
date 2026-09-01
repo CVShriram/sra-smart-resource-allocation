@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}SRA | Smart Resource Allocation{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brandmark">S</div><div><b>SRA</b><small>Resource Intelligence</small></div></div>
+  <div class="navlabel">WORKSPACE</div>
+  <a class="navitem {% if request.path=='/' %}active{% endif %}" href="/">⌂ <span>Dashboard</span></a>
+  <div class="navlabel">MANAGE</div>
+  <a class="navitem {% if request.path.startswith('/employees') %}active{% endif %}" href="/employees">◉ <span>Employees</span></a>
+  <a class="navitem {% if request.path.startswith('/skills') %}active{% endif %}" href="/skills">◆ <span>Skills</span></a>
+  <a class="navitem {% if request.path.startswith('/projects') %}active{% endif %}" href="/projects">▣ <span>Projects</span></a>
+  <a class="navitem {% if request.path.startswith('/allocations') %}active{% endif %}" href="/allocations">↗ <span>Allocations</span></a>
+  <a class="navitem {% if request.path.startswith('/skills/assign') %}active{% endif %}" href="/skills/assign">＋ <span>Assign Skills</span></a>
+  <div class="navlabel">INTELLIGENCE</div>
+  <a class="navitem {% if request.path.startswith('/match') %}active{% endif %}" href="/match">⌁ <span>Match Testing</span></a>
+  <a class="navitem {% if request.path.startswith('/recommendations') %}active{% endif %}" href="/recommendations">★ <span>Best Employee</span></a>
+  <a class="navitem {% if request.path.startswith('/team') %}active{% endif %}" href="/team">♙ <span>Smart Team</span></a>
+  <a class="navitem {% if request.path.startswith('/reallocation') %}active{% endif %}" href="/reallocation">⇄ <span>Reallocation</span></a>
+  <a class="navitem {% if request.path.startswith('/optimization') %}active{% endif %}" href="/optimization">◎ <span>Optimization</span></a>
+  <a class="navitem {% if request.path.startswith('/advisor') %}active{% endif %}" href="/advisor">✦ <span>Advisor</span></a>
+  <div class="navlabel">ANALYTICS</div>
+  <a class="navitem {% if request.path.startswith('/analytics') %}active{% endif %}" href="/analytics">▥ <span>Utilization</span></a>
+  <a class="navitem {% if request.path.startswith('/risk') %}active{% endif %}" href="/risk">△ <span>Project Risk</span></a>
+  <a class="navitem {% if request.path.startswith('/forecast') %}active{% endif %}" href="/forecast">◷ <span>Demand Forecast</span></a>
+  <a class="navitem {% if request.path.startswith('/performance') %}active{% endif %}" href="/performance">↗ <span>Performance</span></a>
+  <a class="navitem {% if request.path.startswith('/trends') %}active{% endif %}" href="/trends">⌁ <span>History & Trends</span></a>
+  <a class="navitem {% if request.path.startswith('/executive') %}active{% endif %}" href="/executive">▤ <span>Executive KPIs</span></a>
+  <a class="navitem {% if request.path.startswith('/validation') %}active{% endif %}" href="/validation">✓ <span>System Health</span></a>
+  <a class="navitem {% if request.path.startswith('/reports') %}active{% endif %}" href="/reports">▤ <span>Final Report</span></a>
+  <div class="sidebar-user"><b>{{ current_user.username }}</b><small>{{ current_user.role|upper }}</small><a href="/logout">Logout</a></div><a class="navitem {% if request.path.startswith('/users') %}active{% endif %}" href="/users">⚙ <span>User Management</span></a><div class="sidebar-foot"><span class="dot"></span> PostgreSQL connected</div>
+</aside>
+<main class="main">
+  <header class="topbar"><div><span class="eyebrow">SMART RESOURCE ALLOCATION PLATFORM</span><h1>{% block heading %}Decision Support System{% endblock %}</h1></div><div class="tech-pill"><span class="live-dot"></span> Live · Python + Flask + PostgreSQL</div></header>
+  {% with messages=get_flashed_messages(with_categories=true) %}{% for c,m in messages %}<div class="flash {{c}}">{{m}}</div>{% endfor %}{% endwith %}
+  {% block content %}{% endblock %}
+</main>
+</body></html>

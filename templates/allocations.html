@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block heading %}Allocation Management{% endblock %}
+{% block content %}
+<p class="sub">Create, modify and remove allocations. Employee capacity is calculated from actual allocation records.</p>
+<section class="panel formpanel">
+<h2>Create Allocation</h2>
+<form method="post" class="formgrid"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<select name="employee_id" required>{% for e in employees %}<option value="{{e[0]}}">{{e[1]}} · {{'%.2f'|format(e[2]|float)}}% available</option>{% endfor %}</select>
+<select name="project_id" required>{% for p in projects %}<option value="{{p[0]}}">{{p[1]}}</option>{% endfor %}</select>
+<input name="allocation" type="number" min="0.01" max="100" step="0.01" placeholder="Allocation % (e.g. 37.5)" required>
+<button class="btn" type="submit">Allocate</button>
+</form>
+<p class="muted">Any value from 0.01% to 100% is accepted, subject to employee and project capacity.</p>
+</section>
+<section class="panel"><h2>Current Allocations</h2>
+<table><tr><th>ID</th><th>Employee</th><th>Project</th><th>Allocation</th><th>Date</th><th>Actions</th></tr>
+{% for a in allocations %}<tr><td>{{a[0]}}</td><td>{{a[1]}}</td><td>{{a[2]}}</td><td><b>{{a[3]}}%</b></td><td>{{a[4]}}</td><td>
+<form method="post" action="/allocations/{{a[0]}}/modify" class="inlineform"><input type="hidden" name="_csrf" value="{{ csrf_token }}"><input name="allocation" type="number" min="0.01" max="100" step="0.01" value="{{a[3]}}" style="max-width:110px"><button class="btn mini" type="submit">Modify</button></form>
+<form method="post" action="/allocations/{{a[0]}}/delete" style="margin-top:6px"><input type="hidden" name="_csrf" value="{{ csrf_token }}"><button class="btn danger mini" type="submit">Remove</button></form>
+</td></tr>{% endfor %}
+</table></section>
+{% endblock %}
